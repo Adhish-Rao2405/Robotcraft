@@ -1,0 +1,91 @@
+#include <iostream>  // for cout
+#include <cmath>     // for sqrt
+#include <cstdlib>   // for rand
+#include <ctime>     // for time (used to seed random generator)
+
+// Represents a 2D position (x, y) on a plane
+class Position {
+public:
+    int x, y;
+
+    // Constructor to initialize coordinates
+    Position(int xVal, int yVal) : x(xVal), y(yVal) {}
+};
+
+// Prints the position in the required format
+void PrintPosition(const Position* pos) {
+    if (pos) {
+        std::cout << "Robot Position: x = " << pos->x << ", y = " << pos->y << std::endl;
+    }
+}
+
+// Creates a new Position object with given x and y values
+Position* CreatePosition(int x, int y) {
+    return new Position(x, y);
+}
+
+// Frees the memory used by a Position object
+void DestroyPosition(Position* pos) {
+    delete pos;
+}
+
+// Calculates the straight-line (Euclidean) distance between two positions
+float DistancePositions(const Position* a, const Position* b) {
+    if (!a || !b) return -1.0f; // handle null pointers just in case
+
+    int dx = a->x - b->x;
+    int dy = a->y - b->y;
+    return std::sqrt(dx * dx + dy * dy);
+}
+
+// Generates an array of N random Position objects (x and y in range 0–10)
+Position** GenerateArrayOfPositions(int N) {
+    Position** array = new Position*[N];
+    for (int i = 0; i < N; ++i) {
+        int x = rand() % 11;
+        int y = rand() % 11;
+        array[i] = CreatePosition(x, y);
+    }
+    return array;
+}
+
+// Frees all memory used by an array of Position objects
+void DestroyArrayOfPositions(Position** array, int N) {
+    for (int i = 0; i < N; ++i) {
+        DestroyPosition(array[i]);
+    }
+    delete[] array;
+}
+
+int main() {
+    // Seed random generator to get different results each run
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    // --- Testing single position creation and printing ---
+    Position* robot = CreatePosition(6, 4);
+    PrintPosition(robot);
+
+    Position* target = CreatePosition(6, 10);
+    PrintPosition(target);
+
+    // Calculate and show distance between robot and target
+    std::cout << "Distance: " << DistancePositions(robot, target) << std::endl;
+
+    // Clean up memory for single positions
+    DestroyPosition(robot);
+    DestroyPosition(target);
+
+    // --- Testing array of positions ---
+    int N = 3;  // how many positions to generate
+    Position** array = GenerateArrayOfPositions(N);
+
+    std::cout << "\nGenerated Array of Positions:\n";
+    for (int i = 0; i < N; ++i) {
+        PrintPosition(array[i]);
+    }
+
+    // Clean up all memory used by the array
+    DestroyArrayOfPositions(array, N);
+
+    return 0;
+}
