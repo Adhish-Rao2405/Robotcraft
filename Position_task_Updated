@@ -1,0 +1,84 @@
+#include <iostream>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
+
+class Position {
+private:
+    int x;
+    int y;
+
+public:
+    // Constructor: Part (b)
+    Position(int x = 0, int y = 0) : x(x), y(y) {}
+
+    // Print format: Part (a)
+    void print() const {
+        std::cout << "Robot Position: x = " << x << ", y = " << y << std::endl;
+    }
+
+    // Distance to another Position: Part (d)
+    float distanceTo(const Position& other) const {
+        int dx = x - other.x;
+        int dy = y - other.y;
+        return std::sqrt(dx * dx + dy * dy);
+    }
+
+    // Generate array of random Positions (0–10): Part (e)
+    static std::vector<Position> generateArrayOfPositions(int N) {
+        std::vector<Position> arr;
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+        for (int i = 0; i < N; ++i) {
+            int randX = std::rand() % 11;
+            int randY = std::rand() % 11;
+            arr.emplace_back(randX, randY);
+        }
+
+        return arr;
+    }
+};
+
+// Destroy a single Position and show confirmation: Part (c)
+void DestroyPosition(Position*& p) {
+    if (p) {
+        std::cout << "Deleting: ";
+        p->print();
+        delete p;
+        p = nullptr;
+    }
+}
+
+int main() {
+    // --- Part (b): Create new positions ---
+    Position* robot = new Position(3, 4);
+    Position* target = new Position(6, 8);
+
+    // --- Part (a): Print positions ---
+    robot->print();
+    target->print();
+
+    // --- Part (d): Distance between them ---
+    std::cout << "Distance between robot and target: "
+              << robot->distanceTo(*target) << std::endl;
+
+    // --- Part (e): Generate array of random positions ---
+    std::vector<Position> arr = Position::generateArrayOfPositions(3);
+    std::cout << "\nGenerated random positions:\n";
+    for (const auto& p : arr)
+        p.print(); // Part (a) reused
+
+    // --- Part (f): No explicit destroy needed for vector (auto memory management) ---
+
+    // --- Part (c): Destroy individual positions ---
+    std::cout << "\nDestroying robot and target positions...\n";
+    DestroyPosition(robot);
+    DestroyPosition(target);
+
+    // Final confirmation
+    if (!robot) std::cout << "robot is nullptr\n";
+    if (!target) std::cout << "target is nullptr\n";
+
+    return 0;
+}
